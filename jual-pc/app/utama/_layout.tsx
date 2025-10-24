@@ -6,6 +6,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack } from 'expo-router'; // 👈 penting biar semua page dalam folder ini bisa tampil
 import { useTheme } from '../../hooks/themecontext.js'; // Import ThemeContext untuk akses theme dan toggle
+import { useRouter } from 'expo-router';
 
 // The 'children' prop is the current page being rendered (e.g., home, detail, tambah).
 export default function UtamaLayout() {
@@ -36,11 +37,19 @@ export default function UtamaLayout() {
 
       {/* 👇 Stack ini bakal render file home.js, tambah.js, detail.js otomatis */}
       <Stack
-        screenOptions={{
-          headerShown: false, // hide header bawaan expo-router
-          contentStyle: { backgroundColor },
-        }}
-      />
+  screenOptions={{
+    headerShown: false, // hide header default
+    animation: 'none', // hindari animasi reload saat pindah halaman
+    freezeOnBlur: true, // biar state halaman lama tetap tersimpan
+    contentStyle: { backgroundColor },
+  }}
+>
+  {/* Optional: bisa tambahin definisi screen manual kalau mau kontrol spesifik */}
+  <Stack.Screen name="home" options={{ title: 'Home', freezeOnBlur: true }} />
+  <Stack.Screen name="detail" options={{ title: 'Detail', freezeOnBlur: true }} />
+  <Stack.Screen name="tambah" options={{ title: 'Tambah Produk', freezeOnBlur: true }} />
+</Stack>
+
 
       {/* Example: Footer for all utama pages */}
       <View style={[styles.footer, { backgroundColor: footerColor }]}>

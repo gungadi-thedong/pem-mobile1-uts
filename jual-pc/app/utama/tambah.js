@@ -10,7 +10,7 @@ export default function TambahScreen() {
     const [rawPrice, setRawPrice] = useState('');
   const [category, setCategory] = useState('');
   const [quantity, setQuantity] = useState('');
-  const addProduct = useProductStore((state) => state.addProduct);
+            const addProduct = useProductStore((state) => state.addProduct);
   const router = useRouter();
 
     // helper to format digits as Indonesian Rupiah (no decimals)

@@ -30,28 +30,31 @@ export default function HomeScreen() {
     };
 
     const renderItem = ({ item }) => (
-        <Pressable 
+        // Entire card navigates to detail page when pressed (except the action buttons)
+        <Pressable
             style={styles.itemContainer}
-            onPress={() => togglePurchased(item.id)}
-            >
+            onPress={() => router.push({ pathname: '/utama/detail', params: { id: String(item.id) } })}
+
+        >
             <View style={styles.itemContent}>
                 <View style={styles.itemInfo}>
                     <Text style={[styles.itemName, item.purchased && styles.purchased]}>
-                        {item.name} 
+                        {item.name}
                     </Text>
                     <Text style={styles.itemDetails}>
                         Qty: {item.quantity} | ${item.price} | {item.category}
                     </Text>
                 </View>
+
+                {/* Action buttons: only these should be interactive for purchase/delete */}
                 <View style={styles.itemActions}>
                     <Pressable
                         style={[styles.button, item.purchased && styles.purchasedButton]}
                         onPress={() => togglePurchased(item.id)}
                     >
-                        <Text style={styles.buttonText}>
-                            {item.purchased ? '✓' : 'o'}
-                        </Text>
-                </Pressable>
+                        <Text style={styles.buttonText}>{item.purchased ? '✓' : 'o'}</Text>
+                    </Pressable>
+
                     <Pressable
                         style={styles.deleteButton}
                         onPress={() => handleDelete(item.id, item.name)}
@@ -61,7 +64,6 @@ export default function HomeScreen() {
                 </View>
             </View>
         </Pressable>
-
     );
 
     const emptyList = () => (
@@ -81,11 +83,12 @@ export default function HomeScreen() {
                 contentContainerStyle={products.length === 0 && styles.flatListContainer}
             />
             <Pressable
-                style={styles.fab}
-                onPress={() => router.push('/utama/tambah')}
+            style={styles.fab}
+            onPress={() => router.push('/utama/tambah')}
             >
-                <Text style={styles.fabText}>Tambah</Text>
+            <Text style={styles.fabText}>Tambah</Text>
             </Pressable>
+
         </View>
     );
 }; //akhirnya

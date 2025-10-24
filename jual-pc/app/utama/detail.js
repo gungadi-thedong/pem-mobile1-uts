@@ -7,8 +7,8 @@ export default function DetailScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams();
     const { products, updateProduct, removeProduct } = useProductStore();
-    
-    const product = products.find((prod) => prod.id === id);
+
+    const product = products.find((prod) => String(prod.id) === String(id));
     
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
@@ -63,7 +63,8 @@ export default function DetailScreen() {
     if (isNaN(quantity) || parseInt(quantity, 10) <= 0) {
         throw new Error('Quantity must be a positive number!');
     }
-
+    return true;
+  }
     const handlesave = () => {
         try {
             if (validation()) {
@@ -169,6 +170,13 @@ export default function DetailScreen() {
                     >
                     <Text style={styles.buttonText}>Simpan</Text>
                 </Pressable>
+
+                <Pressable
+                    style={[styles.button, styles.cancelbutton]}
+                    onPress={() => router.back()}
+                    >
+                    <Text style={styles.buttonText}>Kembali</Text>
+                </Pressable>
                 
                 <Pressable
                     style={[styles.button, styles.cancelbutton]}
@@ -179,9 +187,8 @@ export default function DetailScreen() {
             </View>
         </View>
     </ScrollView>
-  )
-
-};
+  );
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -231,5 +238,3 @@ const styles = StyleSheet.create({
         color: 'red',
     }
 })
-
-}
