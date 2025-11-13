@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, Pressable } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../hooks/themecontext.js';
-import { getUserData } from '../../hooks/user-store.js';
+// import { getUserData } from '../../hooks/user-store.js'; // TIDAK DIPAKAI di sini
 import { useRouter } from 'expo-router';
+import { supabase } from "../../lib/supabase.js";
 
 export default function LoginScreen() {
   const { colors, theme } = useTheme();
@@ -11,20 +12,43 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async () => {
-    const storedUser = await getUserData();
-    if (!storedUser) {
-      alert('Belum ada akun terdaftar.');
-      return;
-    }
+const handleLogin = async () => {
+  if (!username || !password) {
+    alert("Isi username & password");
+    return;
+  }
 
-    if (storedUser.username === username && storedUser.password === password) {
-      alert('Login berhasil!');
-      router.replace('../utama/home');
-    } else {
-      alert('Username atau password salah!');
-    }
-  };
+  // --- MENGHILANGKAN LOGIKA SUPABASE AUTH ---
+  // 1) Cek langsung ke tabel 'user' untuk mencari kecocokan username dan password
+  const { data: userRow, error: selectError } = await supabase
+    .from("user")
+    .select("*")
+    // Memastikan username DAN password cocok
+    .eq("username", username)
+    .eq("password", password) // Perhatian: Ini mencari plaintext password
+    .single();
+
+  if (selectError && selectError.code === "PGRST116") {
+    // PGRST116 berarti tidak ada baris yang ditemukan (username/password salah)
+    alert("❌ Username atau Password salah.");
+    return;
+  }
+  
+  if (selectError) {
+    // Error lain (misalnya masalah koneksi atau RLS)
+    console.log(selectError);
+    alert("Gagal ambil data dari DB: " + selectError.message);
+    return;
+  }
+
+  // Jika berhasil menemukan baris (userRow tidak null)
+  alert("✅ Login berhasil\nSelamat datang " + userRow.username);
+  router.replace('../utama/home');
+  
+  // Jika Anda ingin navigasi setelah login
+  // router.replace('(tabs)/utama'); // Contoh navigasi
+};
+
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

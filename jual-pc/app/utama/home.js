@@ -6,6 +6,10 @@ export default function HomeScreen() {
     const router = useRouter();
     const { products, removeProduct, togglePurchased } = useProductStore();
 
+    const handleLogout = () => {
+        router.push('/utama/logout'); 
+    };
+
     const handleDelete = (id, name) => {
         if (Platform.OS === 'web') {
             const confirmDelete = confirm(`Are you sure you want to delete "${name}"?`);
@@ -74,6 +78,13 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
+            {/* ⬇️ TOMBOL LOGOUT BARU di atas FlatList ⬇️ */}
+            <Pressable 
+                style={styles.logoutButton} 
+                onPress={handleLogout} // Memanggil fungsi yang sudah dimodifikasi
+            >
+                <Text style={styles.logoutButtonText}>Logout 🚪</Text>
+            </Pressable>
             <FlatList
                 data={products}
                 renderItem={renderItem}
@@ -185,5 +196,16 @@ const styles = StyleSheet.create({
     fabText: {
         color: '#fff',
         fontWeight: '700',
+    },
+    logoutButton: {
+        alignSelf: 'flex-end',
+        padding: 8,
+        backgroundColor: '#FF6347', // Warna merah yang lebih jelas
+        borderRadius: 4,
+        marginBottom: 10,
+    },
+    logoutButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
     },
 });

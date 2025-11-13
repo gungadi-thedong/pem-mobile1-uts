@@ -47,6 +47,7 @@ export default function UtamaLayout() {
   {/* Optional: bisa tambahin definisi screen manual kalau mau kontrol spesifik */}
   <Stack.Screen name="home" options={{ title: 'Home', freezeOnBlur: true }} />
   <Stack.Screen name="detail" options={{ title: 'Detail', freezeOnBlur: true }} />
+  <Stack.Screen name="logout" options={{ title: 'Logout', presentation: 'transparentModal' }} /> 
   <Stack.Screen name="tambah" options={{ title: 'Tambah Produk', freezeOnBlur: true }} />
 </Stack>
 
