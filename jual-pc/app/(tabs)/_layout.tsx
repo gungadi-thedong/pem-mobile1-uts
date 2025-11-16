@@ -2,7 +2,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { ThemeProvider, useTheme } from '../../hooks/themecontext.js';
-import { StatusBar, View, Pressable, Text, StyleSheet } from 'react-native';
+import { StatusBar, View, Pressable, Text, StyleSheet, Platform } from 'react-native';
 
 // This component renders the toggle button for light/dark mode
 function ThemeToggleButton() {
@@ -33,8 +33,10 @@ function TabsLayoutContent() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* StatusBar color changes with theme */}
       <StatusBar
+        hidden={Platform.OS === "android"}
+        translucent
         barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={colors.background}
+        backgroundColor="transparent"
       />
 
       {/* Theme toggle button at the top */}

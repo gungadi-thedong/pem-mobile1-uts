@@ -3,10 +3,11 @@
 // You can add a header, footer, or any global UI for all 'utama' pages here.
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Stack } from 'expo-router'; // 👈 penting biar semua page dalam folder ini bisa tampil
 import { useTheme } from '../../hooks/themecontext.js'; // Import ThemeContext untuk akses theme dan toggle
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'react-native';
 
 // The 'children' prop is the current page being rendered (e.g., home, detail, tambah).
 export default function UtamaLayout() {
@@ -23,6 +24,12 @@ export default function UtamaLayout() {
   return (
     // This View wraps every utama page.
     <View style={[styles.container, { backgroundColor }]}>
+      {/* ⬇️ FULLSCREEN STATUS BAR UNTUK ANDROID */}
+      <StatusBar
+        hidden={Platform.OS === "android"} // 👈 HILANGKAN STATUS BAR DI ANDROID
+        translucent
+        backgroundColor="transparent"
+      />
       {/* Example: Header for all utama pages */}
       <View style={[styles.header, { backgroundColor: headerColor }]}>
         <Text style={[styles.headerText, { color: '#fff' }]}>PC People</Text>
@@ -37,6 +44,7 @@ export default function UtamaLayout() {
 
       {/* 👇 Stack ini bakal render file home.js, tambah.js, detail.js otomatis */}
       <Stack
+      key={theme}
   screenOptions={{
     headerShown: false, // hide header default
     animation: 'none', // hindari animasi reload saat pindah halaman
