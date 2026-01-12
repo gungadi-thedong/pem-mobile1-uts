@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, StyleSheet, Platform, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useProductStore } from '../../hooks/product-store';
+import { supabase } from '../../lib/supabase';
 
 export default function DetailScreen() {
     const router = useRouter();
@@ -15,6 +16,46 @@ export default function DetailScreen() {
     const [rawPrice, setRawPrice] = useState('');
     const [category, setCategory] = useState('');
     const [quantity, setQuantity] = useState('');
+
+const handlesave = async () => {
+    try {
+        if (validation()) {
+            // ✅ Update local Zustand store (using your app's field names)
+            updateProduct(product.id, {
+                name,
+                price: parseInt(rawPrice),
+                category,
+                quantity: parseInt(quantity),
+            });
+
+            // ✅ Update Supabase (using database column names)
+            const { error } = await supabase
+                .from('produk')
+                .update({
+                    nama_produk: name,
+                    harga: parseInt(rawPrice),
+                    jumlah_produk: parseInt(quantity),
+                })
+                .eq('id_produk', product.id);
+
+            if (error) {
+                throw new Error('Failed to update: ' + error.message);
+            }
+
+            if (Platform.OS === 'web') {
+                alert('Product updated successfully!');
+                router.back();
+            } else {
+                const alert = require('react-native').Alert;
+                alert.alert('Success', 'Product updated successfully!', [
+                    { text: 'OK', onPress: () => router.back() }
+                ]);
+            }
+        }
+    } catch (error) {
+        alert(error.message);
+    }
+};
 
     // initialize form from product data; format price for display
     useEffect(() => {
@@ -65,30 +106,30 @@ export default function DetailScreen() {
     }
     return true;
   }
-    const handlesave = () => {
-        try {
-            if (validation()) {
-                updateProduct(product.id, {
-                    name,
-                    price: parseInt(rawPrice),
-                    category,
-                    quantity: parseInt(quantity),
-                });
+    // const handlesave = () => {
+    //     try {
+    //         if (validation()) {
+    //             updateProduct(product.id, {
+    //                 name,
+    //                 price: parseInt(rawPrice),
+    //                 category,
+    //                 quantity: parseInt(quantity),
+    //             });
 
-                if (Platform.OS === 'web') {
-                    alert('Product updated successfully!');
-                    router.back();
-                } else {
-                    const alert = require('react-native').Alert;
-                    alert.alert('Success', 'Product updated successfully!', [
-                        { text: 'OK', onPress: () => router.back() }
-                    ]);
-                }
-            }
-        } catch (error) {
-            alert(error.message);
-        }
-    };
+    //             if (Platform.OS === 'web') {
+    //                 alert('Product updated successfully!');
+    //                 router.back();
+    //             } else {
+    //                 const alert = require('react-native').Alert;
+    //                 alert.alert('Success', 'Product updated successfully!', [
+    //                     { text: 'OK', onPress: () => router.back() }
+    //                 ]);
+    //             }
+    //         }
+    //     } catch (error) {
+    //         alert(error.message);
+    //     }
+    // };
 
     const handleDelete = () => {
         if (Platform.OS === 'web') {
